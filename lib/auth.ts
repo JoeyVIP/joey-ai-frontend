@@ -10,36 +10,8 @@ export const authOptions: NextAuthOptions = {
   ],
   callbacks: {
     async signIn({ user, account, profile }) {
-      // Sync user with backend
-      if (account?.provider === "github" && profile) {
-        try {
-          const githubProfile = profile as any
-          const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/auth/github-login`, {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              github_id: githubProfile.id || account.providerAccountId,
-              username: githubProfile.login || user.name,
-              email: user.email,
-              avatar_url: user.image,
-            }),
-          })
-
-          if (!response.ok) {
-            console.error("Failed to sync user with backend")
-            return false
-          }
-
-          const backendUser = await response.json()
-          // Store backend user ID in session
-          user.id = backendUser.id
-        } catch (error) {
-          console.error("Error syncing user:", error)
-          return false
-        }
-      }
+      // Allow all GitHub logins for now
+      // Backend sync can be done in session callback
       return true
     },
     async jwt({ token, user, account, profile }) {
@@ -51,7 +23,8 @@ export const authOptions: NextAuthOptions = {
       }
       if (profile) {
         const githubProfile = profile as any
-        token.githubId = githubProfile.id
+        token.githubId = githubProfile.id?.toString()
+        token.githubUsername = githubProfile.login
       }
       return token
     },
