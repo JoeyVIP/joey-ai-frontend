@@ -56,16 +56,16 @@ export default function DashboardPage() {
   }, [status, router])
 
   useEffect(() => {
-    if (session?.user?.id) {
+    if (status === "authenticated") {
       loadProjects()
     }
-  }, [session])
+  }, [status])
 
   const loadProjects = async () => {
     try {
       setLoading(true)
       setError(null)
-      const data = await apiClient.getProjects(Number(session?.user?.id))
+      const data = await apiClient.getProjects()
       setProjects(data)
     } catch (err) {
       setError(err instanceof Error ? err.message : "載入專案失敗")
@@ -84,7 +84,6 @@ export default function DashboardPage() {
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-      {/* Header */}
       <header className="bg-white dark:bg-gray-800 border-b">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex items-center justify-between">
@@ -106,7 +105,6 @@ export default function DashboardPage() {
         </div>
       </header>
 
-      {/* Content */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {error && (
           <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg text-red-800">
@@ -149,7 +147,7 @@ export default function DashboardPage() {
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {projects.map((project) => {
-              const config = statusConfig[project.status]
+              const config = statusConfig[project.status] || statusConfig.pending
               const StatusIcon = config.icon
 
               return (
