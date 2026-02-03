@@ -1,0 +1,13 @@
+services:
+  - type: web
+    name: joey-ai-frontend
+    runtime: docker
+    region: oregon
+    plan: free
+    dockerfilePath: ./Dockerfile
+    envVars:
+      - key: NEXT_PUBLIC_API_URL
+        value: https://joey-ai-agent-api.onrender.com
+      - key: NEXTAUTH_URL
+        value: https://joey-ai-frontend.onrender.com
+    healthCheckPath: /
