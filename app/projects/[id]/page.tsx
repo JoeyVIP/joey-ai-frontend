@@ -29,7 +29,7 @@ export default function ProjectDetailPage() {
   const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
-    if (session?.user?.id && projectId) {
+    if (projectId) {
       loadProject()
       loadLogs()
     }
@@ -41,7 +41,7 @@ export default function ProjectDetailPage() {
     }
 
     // Connect to SSE stream
-    const eventSource = apiClient.connectToProjectStream(projectId, Number(session?.user?.id))
+    const eventSource = apiClient.connectToProjectStream(projectId, )
 
     eventSource.onmessage = (event) => {
       try {
@@ -85,7 +85,7 @@ export default function ProjectDetailPage() {
     try {
       setIsLoading(true)
       setError(null)
-      const project = await apiClient.getProject(projectId, Number(session?.user?.id))
+      const project = await apiClient.getProject(projectId, )
       setCurrentProject(project)
     } catch (err) {
       setError(err instanceof Error ? err.message : "載入專案失敗")
@@ -96,7 +96,7 @@ export default function ProjectDetailPage() {
 
   const loadLogs = async () => {
     try {
-      const projectLogs = await apiClient.getProjectLogs(projectId, Number(session?.user?.id))
+      const projectLogs = await apiClient.getProjectLogs(projectId, )
       setLogs(projectLogs)
     } catch (err) {
       console.error("Failed to load logs:", err)

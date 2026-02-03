@@ -16,7 +16,7 @@ class APIClient {
       },
     })
 
-    if (\!response.ok) {
+    if (!response.ok) {
       const error = await response.text()
       throw new Error(error || `HTTP ${response.status}`)
     }
@@ -24,9 +24,8 @@ class APIClient {
     return response.json()
   }
 
-  // Projects - simplified without user_id for now
   async getProjects(): Promise<Project[]> {
-    return this.fetch<Project[]>(`/api/projects`)
+    return this.fetch<Project[]>("/api/projects")
   }
 
   async getProject(projectId: number): Promise<Project> {
@@ -34,7 +33,7 @@ class APIClient {
   }
 
   async createProject(data: CreateProjectData): Promise<Project> {
-    return this.fetch<Project>(`/api/projects`, {
+    return this.fetch<Project>("/api/projects", {
       method: "POST",
       body: JSON.stringify(data),
     })
@@ -42,6 +41,11 @@ class APIClient {
 
   async getProjectLogs(projectId: number): Promise<TaskLog[]> {
     return this.fetch<TaskLog[]>(`/api/projects/${projectId}/logs`)
+  }
+
+  connectToProjectStream(projectId: number, userId?: number): EventSource {
+    const url = `${API_URL}/api/projects/${projectId}/stream`
+    return new EventSource(url)
   }
 }
 

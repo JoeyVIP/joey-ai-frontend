@@ -37,7 +37,7 @@ export default function NewProjectPage() {
       setIsSubmitting(true)
       setError(null)
 
-      const project = await apiClient.createProject(formData, Number(session.user.id))
+      const project = await apiClient.createProject(formData)
       addProject(project)
 
       router.push(`/projects/${project.id}`)
