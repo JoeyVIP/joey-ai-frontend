@@ -7,7 +7,7 @@ services:
     dockerfilePath: ./Dockerfile
     envVars:
       - key: NEXT_PUBLIC_API_URL
-        value: https://joey-ai-agent-api.onrender.com
+        value: https://ai-agent.89115053.xyz
       - key: NEXTAUTH_URL
         value: https://joey-ai-frontend.onrender.com
     healthCheckPath: /
