@@ -8,13 +8,31 @@ import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Button } from "@/components/ui/button"
 import { Plus, Trash2 } from "lucide-react"
+import { DynamicCmsForm } from "./dynamic-cms-form"
 
 interface ContentTabProps {
   project: Project
   onSave: (content: ProjectContent) => void
+  onSaveCms?: (data: Record<string, unknown>) => void
 }
 
-export function ContentTab({ project, onSave }: ContentTabProps) {
+export function ContentTab({ project, onSave, onSaveCms }: ContentTabProps) {
+  // 有 cms_schema → 顯示動態表單
+  if (project.cms_schema && project.cms_schema.sections.length > 0 && onSaveCms) {
+    return (
+      <DynamicCmsForm
+        project={project}
+        schema={project.cms_schema}
+        onSave={onSaveCms}
+      />
+    )
+  }
+
+  // 無 cms_schema → 舊版 hardcoded 表單
+  return <LegacyContentTab project={project} onSave={onSave} />
+}
+
+function LegacyContentTab({ project, onSave }: { project: Project; onSave: (content: ProjectContent) => void }) {
   const [content, setContent] = useState<ProjectContent>(
     project.content || {
       hero_headline: "",

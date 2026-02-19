@@ -24,6 +24,7 @@ api.interceptors.response.use(
   (err) => {
     if (err.response?.status === 401 && typeof window !== "undefined") {
       localStorage.removeItem("token")
+      localStorage.removeItem("user")
       window.location.href = "/"
     }
     return Promise.reject(err)
@@ -32,14 +33,25 @@ api.interceptors.response.use(
 
 // ==================== Auth ====================
 
-export async function login(password: string) {
-  const res = await api.post("/api/auth/login", { password })
-  return res.data as { token: string; expires_at: string }
+export async function login(username: string, password: string) {
+  const res = await api.post("/api/auth/login", { username, password })
+  return res.data as {
+    token: string
+    expires_at: string
+    user: import("@/types/project").UserInfo
+  }
 }
 
 export async function verifyToken() {
   const res = await api.get("/api/auth/verify")
-  return res.data as { valid: boolean; user: string }
+  return res.data as {
+    valid: boolean
+    user: string
+    user_id: string
+    role: string
+    plan_tier: string
+    is_cms_enabled: boolean
+  }
 }
 
 // ==================== Projects ====================
@@ -95,6 +107,13 @@ export function streamProgress(projectId: string, onEvent: (event: import("@/typ
   }
 
   return source
+}
+
+// ==================== CMS ====================
+
+export async function updateCmsData(projectId: string, cmsData: Record<string, unknown>) {
+  const res = await api.put(`/api/projects/${projectId}/cms`, { cms_data: cmsData })
+  return res.data as import("@/types/project").Project
 }
 
 // ==================== Revisions & Assets ====================
@@ -171,6 +190,49 @@ export async function uploadMd(projectId: string, file: File) {
   form.append("file", file)
   const res = await api.post("/api/upload/md", form)
   return res.data
+}
+
+// ==================== Users （超級管理員） ====================
+
+export async function listUsers() {
+  const res = await api.get("/api/users")
+  return res.data as {
+    users: import("@/types/project").UserInfo[]
+    total: number
+  }
+}
+
+export async function getUser(userId: string) {
+  const res = await api.get(`/api/users/${userId}`)
+  return res.data as import("@/types/project").UserInfo
+}
+
+export async function createUser(data: {
+  username: string
+  password: string
+  display_name?: string
+  role?: string
+  project_ids?: string[]
+  plan_tier?: string
+  is_cms_enabled?: boolean
+}) {
+  const res = await api.post("/api/users", data)
+  return res.data as import("@/types/project").UserInfo
+}
+
+export async function updateUser(userId: string, data: Record<string, unknown>) {
+  const res = await api.put(`/api/users/${userId}`, data)
+  return res.data as import("@/types/project").UserInfo
+}
+
+export async function deleteUser(userId: string) {
+  const res = await api.delete(`/api/users/${userId}`)
+  return res.data
+}
+
+export async function updateUserPlan(userId: string, data: { plan_tier: string; is_cms_enabled: boolean }) {
+  const res = await api.put(`/api/users/${userId}/plan`, data)
+  return res.data as import("@/types/project").UserInfo
 }
 
 export default api

@@ -4,7 +4,7 @@ import { useEffect, useState } from "react"
 import { useParams, useRouter } from "next/navigation"
 import { useAuthStore } from "@/stores/auth-store"
 import { useProjectStore } from "@/stores/project-store"
-import { updateProject, reviseProject, buildProject } from "@/lib/api"
+import { updateProject, reviseProject, buildProject, updateCmsData } from "@/lib/api"
 import type { ProjectContent, DesignSystem, TechSettings, IndustryTemplate } from "@/types/project"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Button } from "@/components/ui/button"
@@ -24,7 +24,7 @@ import {
   DialogDescription,
 } from "@/components/ui/dialog"
 import { Textarea } from "@/components/ui/textarea"
-import { ArrowLeft, Rocket, Wrench } from "lucide-react"
+import { ArrowLeft, Rocket, Wrench, Lock } from "lucide-react"
 import { toast } from "sonner"
 
 export default function ProjectDetailPage() {
@@ -32,13 +32,16 @@ export default function ProjectDetailPage() {
   const router = useRouter()
   const projectId = params.id as string
 
-  const { checkAuth, isAuthenticated } = useAuthStore()
+  const { checkAuth, isAuthenticated, isSuperAdmin, isCmsEnabled } = useAuthStore()
   const { currentProject, isLoading, progressEvents, fetchProject, startProgressStream, clearProgress } =
     useProjectStore()
 
   const [showReviseDialog, setShowReviseDialog] = useState(false)
   const [revisionNotes, setRevisionNotes] = useState("")
   const [showProgressDialog, setShowProgressDialog] = useState(false)
+
+  // 權限計算：是否可以編輯
+  const canEdit = isSuperAdmin || isCmsEnabled
 
   useEffect(() => {
     checkAuth().then((ok) => {
@@ -59,6 +62,22 @@ export default function ProjectDetailPage() {
       fetchProject(projectId)
     } catch {
       toast.error("儲存失敗")
+    }
+  }
+
+  const handleSaveCms = async (cmsData: Record<string, unknown>) => {
+    try {
+      await updateCmsData(projectId, cmsData)
+      toast.success("CMS 內容已儲存")
+      fetchProject(projectId)
+    } catch (err: unknown) {
+      const message = (err as { response?: { data?: { detail?: { message?: string } | string } } })
+        ?.response?.data?.detail
+      if (typeof message === "object" && message?.message) {
+        toast.error(message.message)
+      } else {
+        toast.error("儲存失敗")
+      }
     }
   }
 
@@ -135,13 +154,13 @@ export default function ProjectDetailPage() {
             <Badge>{project.status}</Badge>
           </div>
           <div className="flex items-center gap-2">
-            {!project.deploy_url && project.source === "web" && (
+            {isSuperAdmin && !project.deploy_url && project.source === "web" && (
               <Button size="sm" onClick={handleBuild}>
                 <Rocket className="h-4 w-4 mr-1.5" />
                 開始建站
               </Button>
             )}
-            {project.deploy_url && (
+            {canEdit && project.deploy_url && (
               <Button size="sm" variant="outline" onClick={() => setShowReviseDialog(true)}>
                 <Wrench className="h-4 w-4 mr-1.5" />
                 送出修正
@@ -156,31 +175,61 @@ export default function ProjectDetailPage() {
         <Tabs defaultValue="overview">
           <TabsList className="mb-6">
             <TabsTrigger value="overview">總覽</TabsTrigger>
-            <TabsTrigger value="content">內容</TabsTrigger>
-            <TabsTrigger value="design">設計</TabsTrigger>
-            <TabsTrigger value="assets">素材</TabsTrigger>
-            <TabsTrigger value="tech">技術</TabsTrigger>
-            <TabsTrigger value="history">歷史</TabsTrigger>
+            {canEdit ? (
+              <>
+                <TabsTrigger value="content">內容</TabsTrigger>
+                <TabsTrigger value="design">設計</TabsTrigger>
+                <TabsTrigger value="assets">素材</TabsTrigger>
+                {isSuperAdmin && <TabsTrigger value="tech">技術</TabsTrigger>}
+                <TabsTrigger value="history">歷史</TabsTrigger>
+              </>
+            ) : (
+              <>
+                <TabsTrigger value="locked" disabled>
+                  <Lock className="h-3 w-3 mr-1" />
+                  內容
+                </TabsTrigger>
+                <TabsTrigger value="locked2" disabled>
+                  <Lock className="h-3 w-3 mr-1" />
+                  設計
+                </TabsTrigger>
+              </>
+            )}
           </TabsList>
 
           <TabsContent value="overview">
             <OverviewTab project={project} />
+            {!canEdit && (
+              <div className="mt-6 p-4 bg-amber-50 border border-amber-200 rounded-lg">
+                <p className="text-sm text-amber-800">
+                  <Lock className="h-4 w-4 inline mr-1.5" />
+                  CMS 編輯功能尚未開通。如需編輯網站內容，請聯繫管理員升級方案。
+                </p>
+              </div>
+            )}
           </TabsContent>
-          <TabsContent value="content">
-            <ContentTab project={project} onSave={handleSaveContent} />
-          </TabsContent>
-          <TabsContent value="design">
-            <DesignTab project={project} onSave={handleSaveDesign} />
-          </TabsContent>
-          <TabsContent value="assets">
-            <AssetsTab project={project} />
-          </TabsContent>
-          <TabsContent value="tech">
-            <TechTab project={project} onSave={handleSaveTech} />
-          </TabsContent>
-          <TabsContent value="history">
-            <HistoryTab project={project} />
-          </TabsContent>
+
+          {canEdit && (
+            <>
+              <TabsContent value="content">
+                <ContentTab project={project} onSave={handleSaveContent} onSaveCms={handleSaveCms} />
+              </TabsContent>
+              <TabsContent value="design">
+                <DesignTab project={project} onSave={handleSaveDesign} />
+              </TabsContent>
+              <TabsContent value="assets">
+                <AssetsTab project={project} />
+              </TabsContent>
+              {isSuperAdmin && (
+                <TabsContent value="tech">
+                  <TechTab project={project} onSave={handleSaveTech} />
+                </TabsContent>
+              )}
+              <TabsContent value="history">
+                <HistoryTab project={project} />
+              </TabsContent>
+            </>
+          )}
         </Tabs>
       </main>
 

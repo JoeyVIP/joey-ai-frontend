@@ -10,6 +10,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 export default function LoginPage() {
   const router = useRouter()
   const { isAuthenticated, isLoading, error, login, checkAuth } = useAuthStore()
+  const [username, setUsername] = useState("")
   const [password, setPassword] = useState("")
 
   useEffect(() => {
@@ -20,7 +21,7 @@ export default function LoginPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    const ok = await login(password)
+    const ok = await login(username, password)
     if (ok) router.push("/dashboard")
   }
 
@@ -45,11 +46,21 @@ export default function LoginPage() {
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
               <Input
+                type="text"
+                placeholder="帳號"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+                autoFocus
+                autoComplete="username"
+              />
+            </div>
+            <div>
+              <Input
                 type="password"
-                placeholder="輸入管理密碼"
+                placeholder="密碼"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                autoFocus
+                autoComplete="current-password"
               />
             </div>
             {error && <p className="text-sm text-destructive">{error}</p>}

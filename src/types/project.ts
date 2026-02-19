@@ -118,6 +118,46 @@ export interface TechSettings {
   pages: string[]
 }
 
+// ==================== CMS Schema ====================
+
+export type CmsFieldType =
+  | "text"
+  | "textarea"
+  | "number"
+  | "url"
+  | "email"
+  | "phone"
+  | "image"
+  | "boolean"
+  | "select"
+  | "list"
+  | "repeater"
+  | "group"
+
+export interface CmsFieldDef {
+  key: string
+  label: string
+  type: CmsFieldType
+  required?: boolean
+  placeholder?: string
+  help_text?: string
+  default?: unknown
+  options?: string[]       // select 用
+  fields?: CmsFieldDef[]   // group/repeater 子欄位
+}
+
+export interface CmsSectionDef {
+  key: string
+  title: string
+  icon: string  // lucide icon 名稱
+  fields: CmsFieldDef[]
+}
+
+export interface CmsSchema {
+  version: string
+  sections: CmsSectionDef[]
+}
+
 export interface Project {
   id: string
   name: string
@@ -130,6 +170,8 @@ export interface Project {
   content?: ProjectContent
   design_system?: DesignSystem
   tech_settings?: TechSettings
+  cms_schema?: CmsSchema
+  cms_data?: Record<string, unknown>
   assets: string[]
   catalogs: string[]
   created_at: string
@@ -143,4 +185,21 @@ export interface ProgressEvent {
   progress: number
   timestamp: string
   details?: Record<string, unknown>
+}
+
+// ==================== 多租戶用戶系統 ====================
+
+export type UserRole = "super_admin" | "client"
+export type PlanTier = "free" | "basic" | "advanced" | "enterprise"
+
+export interface UserInfo {
+  id: string
+  username: string
+  display_name: string
+  role: UserRole
+  project_ids: string[]
+  plan_tier: PlanTier
+  is_cms_enabled: boolean
+  created_at: string
+  last_login: string
 }
