@@ -39,7 +39,7 @@ type DeskItem =
 // Desk grid layout (3 desks per row for compact canvas)
 const ROW_SIZE = 3;
 const DESK_START_X = 256;
-const DESK_START_Y = 408;
+const DESK_START_Y = 383;
 const DESK_SPACING_X = 256;
 const DESK_SPACING_Y = 192;
 

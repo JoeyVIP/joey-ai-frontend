@@ -48,7 +48,6 @@ import {
   BACKGROUND_COLOR,
 } from "@/constants/canvas";
 import {
-  EMPLOYEE_OF_MONTH_POSITION,
   CITY_WINDOW_POSITION,
   SAFETY_SIGN_POSITION,
   WALL_CLOCK_POSITION,
@@ -75,7 +74,7 @@ import { WallClock } from "./WallClock";
 import { Whiteboard } from "./Whiteboard";
 import { SafetySign } from "./SafetySign";
 import { CityWindow } from "./CityWindow";
-import { EmployeeOfTheMonth } from "./EmployeeOfTheMonth";
+// EmployeeOfTheMonth removed — whiteboard takes its wall spot
 import { Elevator, isAgentInElevator } from "./Elevator";
 import { PrinterStation } from "./PrinterStation";
 import { DebugOverlays } from "./DebugOverlays";
@@ -251,24 +250,18 @@ export function OfficeGame(): ReactNode {
                     />
                   )}
 
-                  {/* Wall decorations */}
+                  {/* Wall decorations (left to right: whiteboard, window, clock, sign) */}
                   <pixiContainer
-                    x={EMPLOYEE_OF_MONTH_POSITION.x}
-                    y={EMPLOYEE_OF_MONTH_POSITION.y}
+                    x={WHITEBOARD_POSITION.x}
+                    y={WHITEBOARD_POSITION.y}
                   >
-                    <EmployeeOfTheMonth />
+                    <Whiteboard todos={todos} />
                   </pixiContainer>
                   <pixiContainer
                     x={CITY_WINDOW_POSITION.x}
                     y={CITY_WINDOW_POSITION.y}
                   >
                     <CityWindow />
-                  </pixiContainer>
-                  <pixiContainer
-                    x={SAFETY_SIGN_POSITION.x}
-                    y={SAFETY_SIGN_POSITION.y}
-                  >
-                    <SafetySign />
                   </pixiContainer>
                   <pixiContainer
                     x={WALL_CLOCK_POSITION.x}
@@ -287,10 +280,10 @@ export function OfficeGame(): ReactNode {
                     />
                   )}
                   <pixiContainer
-                    x={WHITEBOARD_POSITION.x}
-                    y={WHITEBOARD_POSITION.y}
+                    x={SAFETY_SIGN_POSITION.x}
+                    y={SAFETY_SIGN_POSITION.y}
                   >
-                    <Whiteboard todos={todos} />
+                    <SafetySign />
                   </pixiContainer>
                   {textures.waterCooler && (
                     <pixiSprite

@@ -3,31 +3,31 @@
  *
  * All positions are in pixels relative to the canvas origin (top-left).
  * Canvas: 900 x 620, 3 desks, boss area below desks.
+ *
+ * Wall layout (left to right):
+ *   Elevator | Whiteboard | City Window | Clock | Safety Sign | Water Cooler
  */
 
 // ============================================================================
 // WALL DECORATIONS
 // ============================================================================
 
-/** Employee of the Month frame position */
-export const EMPLOYEE_OF_MONTH_POSITION = { x: 184, y: 50 };
+/** Whiteboard position (right of elevator door, top-left corner of 330x205 board) */
+export const WHITEBOARD_POSITION = { x: 155, y: 15 };
 
-/** City window position */
-export const CITY_WINDOW_POSITION = { x: 319, y: 30 };
+/** City window position (after whiteboard) */
+export const CITY_WINDOW_POSITION = { x: 500, y: 30 };
 
-/** Safety sign position (moved left for narrower canvas) */
-export const SAFETY_SIGN_POSITION = { x: 830, y: 40 };
-
-/** Wall clock position */
-export const WALL_CLOCK_POSITION = { x: 581, y: 80 };
+/** Wall clock position (after city window) */
+export const WALL_CLOCK_POSITION = { x: 710, y: 80 };
 
 /** Wall outlet position (below clock) */
-export const WALL_OUTLET_POSITION = { x: 581, y: 209 };
+export const WALL_OUTLET_POSITION = { x: 710, y: 209 };
 
-/** Whiteboard position */
-export const WHITEBOARD_POSITION = { x: 641, y: 11 };
+/** Safety sign position */
+export const SAFETY_SIGN_POSITION = { x: 830, y: 40 };
 
-/** Water cooler position (moved left for narrower canvas) */
+/** Water cooler position */
 export const WATER_COOLER_POSITION = { x: 830, y: 200 };
 
 /** Coffee machine position (to the right of water cooler) */

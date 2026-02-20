@@ -694,12 +694,12 @@ class AgentMachineService {
     const col = index % rowSize;
     // Grid-aligned positions: X at 256, 512, 768
     const xStart = 256;
-    // Chair center is at desk origin (408) + 30 = 438
-    // Agent body center should be 24px above chair (like boss): 438 - 24 = 414
-    // Agent bottom circle center is 18px below body center: 414 + 18 = 432
+    // Chair center is at desk origin (383) + 30 = 413
+    // Agent body center should be 24px above chair (like boss): 413 - 24 = 389
+    // Agent bottom circle center is 18px below body center: 389 + 18 = 407
     return {
       x: xStart + col * 256,
-      y: 432 + row * 192, // Agent bottom circle center for proper chair seating
+      y: 407 + row * 192, // Agent bottom circle center for proper chair seating
     };
   }
 }

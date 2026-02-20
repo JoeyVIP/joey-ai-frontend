@@ -40,10 +40,10 @@ const OBSTACLE_PADDING = 15;
 const WALL_Y_END = 232 + OBSTACLE_PADDING; // Wall visual end + padding (one extra row)
 // Desk obstacles cover the desk SURFACE with padding
 // Chair positions (y=400, y=592) left walkable as destinations
-// Row 0: chair at y=400, desk surface at 440-520 (center 480 = 15*32)
+// Row 0: desk surface moved up 25px (DESK_START_Y 408→383)
 // Top row removed (+32) to allow agents to walk closer to desks
-const DESK_ROW_0_Y = 488 - OBSTACLE_PADDING; // Top of desk row 0 with padding
-const DESK_ROW_0_Y_END = 536 + OBSTACLE_PADDING; // Bottom of desk row 0 with padding
+const DESK_ROW_0_Y = 463 - OBSTACLE_PADDING; // Top of desk row 0 with padding
+const DESK_ROW_0_Y_END = 511 + OBSTACLE_PADDING; // Bottom of desk row 0 with padding
 // Row 1: chair at y=592, desk surface at 632-712 (center 672 = 21*32)
 const DESK_ROW_1_Y = 680 - OBSTACLE_PADDING; // Top of desk row 1 with padding
 const DESK_ROW_1_Y_END = 728 + OBSTACLE_PADDING; // Bottom of desk row 1 with padding

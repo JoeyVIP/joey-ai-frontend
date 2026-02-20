@@ -222,6 +222,6 @@ export function getDeskPosition(deskNum: number): Position {
   const xStart = 256;
   return {
     x: xStart + col * 256,
-    y: 432 + row * 192, // Agent bottom circle center for proper chair seating
+    y: 407 + row * 192, // Agent bottom circle center for proper chair seating
   };
 }
