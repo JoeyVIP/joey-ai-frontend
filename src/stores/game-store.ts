@@ -197,6 +197,18 @@ interface GameStore {
   gitStatus: GitStatus | null;
   eventLog: EventLogEntry[];
 
+  // Queue status（TaskManager 排隊狀態）
+  queueStatus: {
+    max_concurrent: number;
+    active_count: number;
+    queue_count: number;
+    active: Array<{ id: string; name: string; source: string; started_at: string }>;
+    queue: Array<{ id: string; name: string; source: string; position: number }>;
+  };
+
+  // Queue actions
+  setQueueStatus: (status: GameStore["queueStatus"]) => void;
+
   // Office actions
   setSessionId: (id: string) => void;
   setElevatorState: (state: ElevatorState) => void;
@@ -343,7 +355,7 @@ const initialState = {
 
   // Office
   sessionId: "None",
-  deskCount: 8,
+  deskCount: 3,
   elevatorState: "closed" as ElevatorState,
   phoneState: "idle" as PhoneState,
   contextUtilization: 0.0,
@@ -354,6 +366,15 @@ const initialState = {
   todos: [] as TodoItem[],
   gitStatus: null as GitStatus | null,
   eventLog: [] as EventLogEntry[],
+
+  // Queue
+  queueStatus: {
+    max_concurrent: 3,
+    active_count: 0,
+    queue_count: 0,
+    active: [] as Array<{ id: string; name: string; source: string; started_at: string }>,
+    queue: [] as Array<{ id: string; name: string; source: string; position: number }>,
+  },
 
   // Whiteboard
   whiteboardData: initialWhiteboardData,
@@ -408,11 +429,8 @@ export const useGameStore = create<GameStore>()(
         };
         newAgents.set(backendAgent.id, animState);
 
-        // Update desk count if needed
-        const newDeskCount = Math.max(
-          state.deskCount,
-          Math.ceil((newAgents.size + 1) / 4) * 4,
-        );
+        // 桌子數量固定 3（最大同時執行數 = 3）
+        const newDeskCount = 3;
 
         return { agents: newAgents, deskCount: newDeskCount };
       }),
@@ -892,6 +910,8 @@ export const useGameStore = create<GameStore>()(
     setPrintReport: (printReport) => set({ printReport }),
     setGitStatus: (gitStatus) => set({ gitStatus }),
 
+    setQueueStatus: (queueStatus) => set({ queueStatus }),
+
     addEventLog: (event) =>
       set((state) => {
         const timestamp = event.timestamp
@@ -1014,7 +1034,7 @@ export const useGameStore = create<GameStore>()(
         departureQueue: [],
         boss: { ...initialBossState, bubble: createEmptyBubbleState() },
         sessionId: "None",
-        deskCount: 8,
+        deskCount: 3,
         elevatorState: "closed",
         phoneState: "idle",
         contextUtilization: 0.0,
@@ -1163,3 +1183,4 @@ export const selectToolUsesSinceCompaction = (state: GameStore) =>
 export const selectPrintReport = (state: GameStore) => state.printReport;
 export const selectWhiteboardData = (state: GameStore) => state.whiteboardData;
 export const selectWhiteboardMode = (state: GameStore) => state.whiteboardMode;
+export const selectQueueStatus = (state: GameStore) => state.queueStatus;

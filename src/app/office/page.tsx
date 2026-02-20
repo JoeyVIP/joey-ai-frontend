@@ -16,8 +16,9 @@ import {
   selectAgents,
   selectBoss,
   selectEventLog,
+  selectQueueStatus,
 } from "@/stores/game-store";
-import { useSSEEvents, fetchDashboardOverview } from "@/hooks/useSSEEvents";
+import { useSSEEvents, fetchDashboardOverview, fetchQueueStatus } from "@/hooks/useSSEEvents";
 import { useShallow } from "zustand/react/shallow";
 import {
   ArrowLeft,
@@ -27,6 +28,7 @@ import {
   Users,
   Monitor,
   Zap,
+  Layers,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { agentMachineService } from "@/machines/agentMachineService";
@@ -83,6 +85,7 @@ export default function OfficePage() {
   const agents = useGameStore(useShallow(selectAgents));
   const boss = useGameStore(selectBoss);
   const eventLog = useGameStore(selectEventLog);
+  const queueStatus = useGameStore(selectQueueStatus);
 
   // 載入 debug 設定
   const loadPersistedDebugSettings = useGameStore(
@@ -92,16 +95,20 @@ export default function OfficePage() {
     loadPersistedDebugSettings();
   }, [loadPersistedDebugSettings]);
 
-  // 取得 Dashboard 概覽（定期更新）
+  // 取得 Dashboard 概覽 + Queue 狀態（定期更新）
   const loadOverview = useCallback(async () => {
     if (!token) return;
-    const data = await fetchDashboardOverview(API_BASE, token);
-    if (data) setOverview(data);
+    const [overviewData, queueData] = await Promise.all([
+      fetchDashboardOverview(API_BASE, token),
+      fetchQueueStatus(API_BASE, token),
+    ]);
+    if (overviewData) setOverview(overviewData);
+    if (queueData) useGameStore.getState().setQueueStatus(queueData);
   }, [token]);
 
   useEffect(() => {
     loadOverview();
-    const interval = setInterval(loadOverview, 30000);
+    const interval = setInterval(loadOverview, 15000);
     return () => clearInterval(interval);
   }, [loadOverview]);
 
@@ -232,7 +239,7 @@ export default function OfficePage() {
                 </div>
                 <div className="bg-slate-900 rounded-lg p-2 text-center">
                   <div className="text-lg font-bold text-amber-400">
-                    {overview.building_count}
+                    {queueStatus.active_count + queueStatus.queue_count || overview.building_count}
                   </div>
                   <div className="text-[10px] text-slate-500 uppercase tracking-wider">
                     建站中
@@ -321,6 +328,66 @@ export default function OfficePage() {
               )}
             </div>
           </div>
+
+          {/* 排隊狀態 */}
+          {(queueStatus.active_count > 0 || queueStatus.queue_count > 0) && (
+            <div className="flex-shrink-0 border-b border-slate-800">
+              <div className="px-3 py-2 bg-slate-900 flex items-center gap-2">
+                <Layers size={12} className="text-amber-500" />
+                <span className="text-slate-300 font-bold uppercase tracking-wider text-[10px]">
+                  Queue
+                </span>
+                <span className="text-slate-600 text-[10px]">
+                  {queueStatus.active_count}/{queueStatus.max_concurrent} 執行中
+                  {queueStatus.queue_count > 0 && (
+                    <span className="text-amber-500 ml-1">
+                      +{queueStatus.queue_count} 排隊
+                    </span>
+                  )}
+                </span>
+              </div>
+              <div className="max-h-48 overflow-y-auto p-2">
+                <div className="flex flex-col gap-1">
+                  {/* 執行中的任務 */}
+                  {queueStatus.active.map((task) => (
+                    <div
+                      key={task.id}
+                      className="px-2 py-1.5 bg-slate-900 rounded border border-emerald-900/50"
+                    >
+                      <div className="flex items-center gap-2">
+                        <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse shrink-0" />
+                        <span className="text-slate-300 font-bold text-[11px] truncate">
+                          {task.name}
+                        </span>
+                        <span className="text-emerald-600 text-[9px] font-mono ml-auto shrink-0 uppercase">
+                          {task.source}
+                        </span>
+                      </div>
+                    </div>
+                  ))}
+                  {/* 排隊中的任務 */}
+                  {queueStatus.queue.map((task) => (
+                    <div
+                      key={task.id}
+                      className="px-2 py-1.5 bg-slate-900/50 rounded border border-amber-900/30"
+                    >
+                      <div className="flex items-center gap-2">
+                        <span className="text-amber-500 font-bold text-[10px] shrink-0">
+                          #{task.position}
+                        </span>
+                        <span className="text-slate-500 text-[11px] truncate">
+                          {task.name}
+                        </span>
+                        <span className="text-amber-700 text-[9px] font-mono ml-auto shrink-0 uppercase">
+                          {task.source}
+                        </span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          )}
 
           {/* 事件日誌 */}
           <div className="flex-grow flex flex-col overflow-hidden min-h-0">

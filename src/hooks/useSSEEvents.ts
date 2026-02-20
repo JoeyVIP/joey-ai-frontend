@@ -30,6 +30,7 @@ interface SSEEvent {
     | "task_complete"
     | "task_failed"
     | "worker_status"
+    | "queue_update"
     | "heartbeat";
   project_id?: string;
   name?: string;
@@ -41,6 +42,12 @@ interface SSEEvent {
   healthy?: boolean;
   latency_ms?: number;
   timestamp?: string;
+  // queue_update 欄位
+  max_concurrent?: number;
+  active_count?: number;
+  queue_count?: number;
+  active?: Array<{ id: string; name: string; source: string; started_at: string }>;
+  queue?: Array<{ id: string; name: string; source: string; position: number }>;
 }
 
 interface UseSSEEventsOptions {
@@ -105,7 +112,7 @@ export function useSSEEvents({ apiBase, token }: UseSSEEventsOptions): void {
       const agentId = `agent-${projectId}`;
       const agentNumber = agentCounterRef.current++;
       const color = AGENT_COLORS[agentNumber % AGENT_COLORS.length];
-      const deskNumber = (agentNumber % 8) + 1;
+      const deskNumber = (agentNumber % 3) + 1;
       const spawnPosition = getNextSpawnPosition();
 
       const store = useGameStore.getState();
@@ -307,6 +314,18 @@ export function useSSEEvents({ apiBase, token }: UseSSEEventsOptions): void {
           break;
         }
 
+        case "queue_update": {
+          // 更新排隊狀態
+          store.setQueueStatus({
+            max_concurrent: data.max_concurrent ?? 3,
+            active_count: data.active_count ?? 0,
+            queue_count: data.queue_count ?? 0,
+            active: data.active ?? [],
+            queue: data.queue ?? [],
+          });
+          break;
+        }
+
         case "worker_status": {
           // 更新 Boss 狀態反映 Worker 健康度
           if (data.healthy) {
@@ -418,6 +437,27 @@ export async function fetchDashboardOverview(
 } | null> {
   try {
     const res = await fetch(`${apiBase}/api/dashboard/overview`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    if (res.ok) return await res.json();
+  } catch {
+    // 靜默失敗
+  }
+  return null;
+}
+
+export async function fetchQueueStatus(
+  apiBase: string,
+  token: string,
+): Promise<{
+  max_concurrent: number;
+  active_count: number;
+  queue_count: number;
+  active: Array<{ id: string; name: string; source: string; started_at: string }>;
+  queue: Array<{ id: string; name: string; source: string; position: number }>;
+} | null> {
+  try {
+    const res = await fetch(`${apiBase}/api/dashboard/queue`, {
       headers: { Authorization: `Bearer ${token}` },
     });
     if (res.ok) return await res.json();

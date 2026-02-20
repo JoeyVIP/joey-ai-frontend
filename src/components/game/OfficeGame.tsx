@@ -169,10 +169,8 @@ export function OfficeGame(): ReactNode {
     return tasks;
   }, [agents]);
 
-  // Desk count
-  const deskCount = useMemo(() => {
-    return Math.max(8, Math.ceil(agents.size / 4) * 4);
-  }, [agents.size]);
+  // 桌子數量固定 3（最大同時執行 3 個任務）
+  const deskCount = 3;
 
   // Desk positions for Y-sorted rendering
   const deskPositions = useDeskPositions(deskCount, occupiedDesks);
