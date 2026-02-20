@@ -205,7 +205,7 @@ export function OfficeGame(): ReactNode {
     <div className="w-full h-full flex items-center justify-center overflow-hidden relative">
       <TransformWrapper
         initialScale={1}
-        minScale={1}
+        minScale={0.5}
         maxScale={3}
         centerOnInit={true}
         wheel={{ step: 0.1 }}

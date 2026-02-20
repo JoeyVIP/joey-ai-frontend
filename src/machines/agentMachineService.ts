@@ -688,11 +688,11 @@ class AgentMachineService {
   // ==========================================================================
 
   private getDeskPosition(deskNum: number): Position {
-    const rowSize = 4;
+    const rowSize = 3; // 3 desks per row (compact layout)
     const index = deskNum - 1;
     const row = Math.floor(index / rowSize);
     const col = index % rowSize;
-    // Grid-aligned positions matching useDeskPositions: X at 256, 512, 768, 1024
+    // Grid-aligned positions: X at 256, 512, 768
     const xStart = 256;
     // Chair center is at desk origin (408) + 30 = 438
     // Agent body center should be 24px above chair (like boss): 438 - 24 = 414

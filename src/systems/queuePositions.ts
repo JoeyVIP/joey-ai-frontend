@@ -13,15 +13,12 @@
 import { Position } from "@/types";
 
 // Boss desk positions (where agents stand IN FRONT of the desk)
-// Boss desk center at y:928 (grid-aligned 29*32)
-// Agents stand 60px above desk center so pathfinding can reach them
-export const BOSS_SLOT_LEFT: Position = { x: 520, y: 868 }; // Getting work (arrivals)
-export const BOSS_SLOT_RIGHT: Position = { x: 760, y: 868 }; // Receiving work (departures)
+// Boss moved up for compact layout (canvas 900x700)
+export const BOSS_SLOT_LEFT: Position = { x: 380, y: 548 }; // Getting work (arrivals)
+export const BOSS_SLOT_RIGHT: Position = { x: 620, y: 548 }; // Receiving work (departures)
 
 // Boss center position (for rendering)
-// Desk visual: drawn 20px below boss with 80px height → desk center = boss_y + 60
-// For desk center at y=960 (grid-aligned 30*32), boss is at y=900
-export const BOSS_POSITION: Position = { x: 640, y: 900 };
+export const BOSS_POSITION: Position = { x: 500, y: 580 };
 
 // Elevator position (DO NOT CHANGE - this is the elevator's fixed location)
 export const ELEVATOR_POSITION: Position = { x: 86, y: 178 };
@@ -126,34 +123,26 @@ export function isInElevatorZone(pos: Position): boolean {
   );
 }
 
-// Arrival queue positions (left side, horizontal then vertical L-shape)
+// Arrival queue positions (left side, compact layout for 900x700 canvas)
 // Position 0 (A0) is the "ready" spot where agent waits before approaching boss
-// Position 1+ are waiting spots in the queue line
-// A0-A2: horizontal along bottom, A3-A7: vertical going up (above printer)
 export const ARRIVAL_QUEUE_POSITIONS: Position[] = [
-  { x: 480, y: 930 }, // Position 0 (A0 - ready spot, left of boss desk)
-  { x: 330, y: 930 }, // Position 1 (first waiting spot)
-  { x: 190, y: 930 }, // Position 2 (horizontal)
-  { x: 70, y: 820 }, // Position 3 (moved up - above printer)
-  { x: 70, y: 710 }, // Position 4 (vertical going up)
-  { x: 70, y: 600 }, // Position 5
-  { x: 70, y: 490 }, // Position 6
-  { x: 70, y: 380 }, // Position 7
+  { x: 340, y: 610 }, // Position 0 (A0 - ready spot, left of boss desk)
+  { x: 200, y: 610 }, // Position 1 (first waiting spot)
+  { x: 70, y: 610 },  // Position 2 (horizontal)
+  { x: 70, y: 520 },  // Position 3 (go up)
+  { x: 70, y: 440 },  // Position 4
+  { x: 70, y: 370 },  // Position 5
 ];
 
-// Departure queue positions (right side, horizontal then vertical L-shape)
+// Departure queue positions (right side, compact layout for 900x700 canvas)
 // Position 0 (D0) is the "ready" spot where agent waits before approaching boss
-// Position 1+ are waiting spots in the queue line
-// D0-D3: horizontal along bottom, D4-D7: vertical going up
 export const DEPARTURE_QUEUE_POSITIONS: Position[] = [
-  { x: 800, y: 930 }, // Position 0 (D0 - ready spot, right of boss desk)
-  { x: 950, y: 930 }, // Position 1 (first waiting spot)
-  { x: 1090, y: 930 }, // Position 2 (horizontal)
-  { x: 1210, y: 930 }, // Position 3 (corner)
-  { x: 1210, y: 820 }, // Position 4 (vertical going up)
-  { x: 1210, y: 710 }, // Position 5
-  { x: 1210, y: 600 }, // Position 6
-  { x: 1210, y: 490 }, // Position 7
+  { x: 660, y: 610 }, // Position 0 (D0 - ready spot, right of boss desk)
+  { x: 790, y: 610 }, // Position 1 (first waiting spot)
+  { x: 850, y: 530 }, // Position 2 (go up since canvas is narrow)
+  { x: 850, y: 450 }, // Position 3
+  { x: 850, y: 370 }, // Position 4
+  { x: 850, y: 300 }, // Position 5
 ];
 
 export type QueueType = "arrival" | "departure";
@@ -225,15 +214,12 @@ export function calculateQueueSlots(
  * Grid-aligned: X at multiples of 32, row spacing 192 (6×32)
  */
 export function getDeskPosition(deskNum: number): Position {
-  const rowSize = 4;
+  const rowSize = 3; // 3 desks per row (compact layout)
   const index = deskNum - 1;
   const row = Math.floor(index / rowSize);
   const col = index % rowSize;
-  // Grid-aligned positions: 256, 512, 768, 1024
+  // Grid-aligned positions: 256, 512, 768
   const xStart = 256;
-  // Chair center is at desk origin (408) + 30 = 438
-  // Agent body center should be 24px above chair (like boss): 438 - 24 = 414
-  // Agent bottom circle center is 18px below body center: 414 + 18 = 432
   return {
     x: xStart + col * 256,
     y: 432 + row * 192, // Agent bottom circle center for proper chair seating

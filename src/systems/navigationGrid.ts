@@ -8,10 +8,10 @@
 import { Position } from "@/types";
 import { ELEVATOR_ZONE } from "./queuePositions";
 
-// Grid configuration
+// Grid configuration (canvas 900x700)
 export const TILE_SIZE = 32;
-export const GRID_WIDTH = 40; // 1280 / 32
-export const GRID_HEIGHT = 32; // 1024 / 32
+export const GRID_WIDTH = 29; // 900 / 32 ≈ 28.1 → 29
+export const GRID_HEIGHT = 22; // 700 / 32 ≈ 21.9 → 22
 
 // Tile types for pathfinding
 export enum TileType {
@@ -47,8 +47,8 @@ const DESK_ROW_0_Y_END = 536 + OBSTACLE_PADDING; // Bottom of desk row 0 with pa
 // Row 1: chair at y=592, desk surface at 632-712 (center 672 = 21*32)
 const DESK_ROW_1_Y = 680 - OBSTACLE_PADDING; // Top of desk row 1 with padding
 const DESK_ROW_1_Y_END = 728 + OBSTACLE_PADDING; // Bottom of desk row 1 with padding
-// Grid-aligned X positions: 256, 512, 768, 1024 (all multiples of 32)
-const DESK_X_POSITIONS = [256, 512, 768, 1024]; // Center X of each desk column
+// Grid-aligned X positions: 256, 512, 768 (3 desks for compact layout)
+const DESK_X_POSITIONS = [256, 512, 768]; // Center X of each desk column
 const DESK_HALF_WIDTH = 70 + OBSTACLE_PADDING; // Desk visual half-width + padding
 // Desk half height matches the calculated deskHalfH in initializeStaticGrid
 
@@ -58,21 +58,21 @@ const ELEVATOR_Y = ELEVATOR_ZONE.minY; // 90
 const ELEVATOR_WIDTH = ELEVATOR_ZONE.maxX - ELEVATOR_ZONE.minX; // 112
 const ELEVATOR_HEIGHT = ELEVATOR_ZONE.maxY - ELEVATOR_ZONE.minY; // 210
 
-const BOSS_DESK_X = 640;
-// Boss at y=900, desk drawn 20px below with 80px height → desk center at y=960
-const BOSS_DESK_Y = 960; // Grid-aligned: 30*32 = 960
+const BOSS_DESK_X = 500;
+// Boss at y=580, desk drawn 20px below → desk center at y=640
+const BOSS_DESK_Y = 640; // Compact layout
 const BOSS_DESK_HALF_WIDTH = 80 + OBSTACLE_PADDING;
 const BOSS_DESK_HALF_HEIGHT = 40 + OBSTACLE_PADDING;
 
-// Printer station (bottom left corner) - only bottom portion blocked
+// Printer station (below boss area)
 const PRINTER_X = 50;
-const PRINTER_Y = 993;
+const PRINTER_Y = 673;
 const PRINTER_HALF_WIDTH = 50 + OBSTACLE_PADDING;
 const PRINTER_HALF_HEIGHT = 12;
 
 // Trash can (right of boss desk)
-const TRASH_CAN_X = 640 + 110; // Boss position.x + offset
-const TRASH_CAN_Y = 900 + 65 + 20; // Boss position.y + offset + bottom adjustment
+const TRASH_CAN_X = 500 + 110; // Boss position.x + offset
+const TRASH_CAN_Y = 580 + 65 + 20; // Boss position.y + offset + bottom adjustment
 const TRASH_CAN_HALF_WIDTH = 20 + OBSTACLE_PADDING;
 const TRASH_CAN_HALF_HEIGHT = 15;
 

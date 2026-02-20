@@ -268,7 +268,7 @@ interface GameStore {
 // CONSTANTS
 // ============================================================================
 
-const BOSS_POSITION: Position = { x: 640, y: 900 }; // Desk center at y=960 (30*32)
+const BOSS_POSITION: Position = { x: 500, y: 580 }; // Boss moved up for compact layout
 const MAX_EVENT_LOG = 500;
 const DEBUG_SETTINGS_KEY = "claude-office-debug-settings";
 const WHITEBOARD_MODE_COUNT = 11; // 0-10 modes
