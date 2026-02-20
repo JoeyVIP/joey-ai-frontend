@@ -13,12 +13,12 @@
 import { Position } from "@/types";
 
 // Boss desk positions (where agents stand IN FRONT of the desk)
-// Boss moved up for compact layout (canvas 900x700)
-export const BOSS_SLOT_LEFT: Position = { x: 380, y: 548 }; // Getting work (arrivals)
-export const BOSS_SLOT_RIGHT: Position = { x: 620, y: 548 }; // Receiving work (departures)
+// Boss moved up for compact layout (canvas 900x620)
+export const BOSS_SLOT_LEFT: Position = { x: 380, y: 500 }; // Getting work (arrivals)
+export const BOSS_SLOT_RIGHT: Position = { x: 620, y: 500 }; // Receiving work (departures)
 
 // Boss center position (for rendering)
-export const BOSS_POSITION: Position = { x: 500, y: 580 };
+export const BOSS_POSITION: Position = { x: 500, y: 530 };
 
 // Elevator position (DO NOT CHANGE - this is the elevator's fixed location)
 export const ELEVATOR_POSITION: Position = { x: 86, y: 178 };
@@ -123,26 +123,26 @@ export function isInElevatorZone(pos: Position): boolean {
   );
 }
 
-// Arrival queue positions (left side, compact layout for 900x700 canvas)
+// Arrival queue positions (left side, compact layout for 900x620 canvas)
 // Position 0 (A0) is the "ready" spot where agent waits before approaching boss
 export const ARRIVAL_QUEUE_POSITIONS: Position[] = [
-  { x: 340, y: 610 }, // Position 0 (A0 - ready spot, left of boss desk)
-  { x: 200, y: 610 }, // Position 1 (first waiting spot)
-  { x: 70, y: 610 },  // Position 2 (horizontal)
-  { x: 70, y: 520 },  // Position 3 (go up)
-  { x: 70, y: 440 },  // Position 4
-  { x: 70, y: 370 },  // Position 5
+  { x: 340, y: 560 }, // Position 0 (A0 - ready spot, left of boss desk)
+  { x: 200, y: 560 }, // Position 1 (first waiting spot)
+  { x: 70, y: 560 },  // Position 2 (horizontal)
+  { x: 70, y: 480 },  // Position 3 (go up)
+  { x: 70, y: 410 },  // Position 4
+  { x: 70, y: 340 },  // Position 5
 ];
 
-// Departure queue positions (right side, compact layout for 900x700 canvas)
+// Departure queue positions (right side, compact layout for 900x620 canvas)
 // Position 0 (D0) is the "ready" spot where agent waits before approaching boss
 export const DEPARTURE_QUEUE_POSITIONS: Position[] = [
-  { x: 660, y: 610 }, // Position 0 (D0 - ready spot, right of boss desk)
-  { x: 790, y: 610 }, // Position 1 (first waiting spot)
-  { x: 850, y: 530 }, // Position 2 (go up since canvas is narrow)
-  { x: 850, y: 450 }, // Position 3
-  { x: 850, y: 370 }, // Position 4
-  { x: 850, y: 300 }, // Position 5
+  { x: 660, y: 560 }, // Position 0 (D0 - ready spot, right of boss desk)
+  { x: 790, y: 560 }, // Position 1 (first waiting spot)
+  { x: 850, y: 490 }, // Position 2 (go up since canvas is narrow)
+  { x: 850, y: 420 }, // Position 3
+  { x: 850, y: 350 }, // Position 4
+  { x: 850, y: 280 }, // Position 5
 ];
 
 export type QueueType = "arrival" | "departure";

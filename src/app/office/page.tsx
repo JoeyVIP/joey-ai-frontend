@@ -219,35 +219,35 @@ export default function OfficePage() {
         <aside className="w-72 flex flex-col bg-slate-950 overflow-hidden shrink-0">
           {/* 概覽統計 */}
           {overview && (
-            <div className="p-3 border-b border-slate-800">
-              <div className="grid grid-cols-2 gap-2">
-                <div className="bg-slate-900 rounded-lg p-2 text-center">
-                  <div className="text-lg font-bold text-white">
+            <div className="p-2 border-b border-slate-800">
+              <div className="grid grid-cols-2 gap-1.5">
+                <div className="bg-slate-900 rounded p-1.5 text-center">
+                  <div className="text-base font-bold text-white leading-tight">
                     {overview.total_projects}
                   </div>
                   <div className="text-[10px] text-slate-500 uppercase tracking-wider">
                     總專案
                   </div>
                 </div>
-                <div className="bg-slate-900 rounded-lg p-2 text-center">
-                  <div className="text-lg font-bold text-emerald-400">
+                <div className="bg-slate-900 rounded p-1.5 text-center">
+                  <div className="text-base font-bold text-emerald-400 leading-tight">
                     {overview.completed_today}
                   </div>
                   <div className="text-[10px] text-slate-500 uppercase tracking-wider">
                     今日完成
                   </div>
                 </div>
-                <div className="bg-slate-900 rounded-lg p-2 text-center">
-                  <div className="text-lg font-bold text-amber-400">
+                <div className="bg-slate-900 rounded p-1.5 text-center">
+                  <div className="text-base font-bold text-amber-400 leading-tight">
                     {queueStatus.active_count + queueStatus.queue_count || overview.building_count}
                   </div>
                   <div className="text-[10px] text-slate-500 uppercase tracking-wider">
                     建站中
                   </div>
                 </div>
-                <div className="bg-slate-900 rounded-lg p-2 text-center">
+                <div className="bg-slate-900 rounded p-1.5 text-center">
                   <div
-                    className={`text-lg font-bold ${overview.worker_healthy ? "text-emerald-400" : "text-rose-500"}`}
+                    className={`text-base font-bold leading-tight ${overview.worker_healthy ? "text-emerald-400" : "text-rose-500"}`}
                   >
                     {overview.worker_healthy ? "ON" : "OFF"}
                   </div>
@@ -260,8 +260,8 @@ export default function OfficePage() {
           )}
 
           {/* Boss 狀態 */}
-          <div className="p-3 border-b border-slate-800">
-            <div className="flex items-center gap-2 mb-2">
+          <div className="px-2 py-1.5 border-b border-slate-800">
+            <div className="flex items-center gap-2 mb-1">
               <div className="w-2 h-2 rounded-full bg-amber-500" />
               <span className="text-amber-400 font-bold text-xs uppercase tracking-wider">
                 Boss
@@ -284,7 +284,7 @@ export default function OfficePage() {
 
           {/* Agent 列表 */}
           <div className="flex-shrink-0 border-b border-slate-800">
-            <div className="px-3 py-2 bg-slate-900 flex items-center gap-2">
+            <div className="px-2 py-1.5 bg-slate-900 flex items-center gap-2">
               <Users size={12} className="text-blue-500" />
               <span className="text-slate-300 font-bold uppercase tracking-wider text-[10px]">
                 Agents
@@ -332,7 +332,7 @@ export default function OfficePage() {
           {/* 排隊狀態 */}
           {(queueStatus.active_count > 0 || queueStatus.queue_count > 0) && (
             <div className="flex-shrink-0 border-b border-slate-800">
-              <div className="px-3 py-2 bg-slate-900 flex items-center gap-2">
+              <div className="px-2 py-1.5 bg-slate-900 flex items-center gap-2">
                 <Layers size={12} className="text-amber-500" />
                 <span className="text-slate-300 font-bold uppercase tracking-wider text-[10px]">
                   Queue
@@ -391,7 +391,7 @@ export default function OfficePage() {
 
           {/* 事件日誌 */}
           <div className="flex-grow flex flex-col overflow-hidden min-h-0">
-            <div className="px-3 py-2 bg-slate-900 flex items-center gap-2 shrink-0">
+            <div className="px-2 py-1.5 bg-slate-900 flex items-center gap-2 shrink-0">
               <Activity size={12} className="text-purple-500" />
               <span className="text-slate-300 font-bold uppercase tracking-wider text-[10px]">
                 Events

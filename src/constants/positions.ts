@@ -2,7 +2,7 @@
  * Position constants for office elements.
  *
  * All positions are in pixels relative to the canvas origin (top-left).
- * Canvas: 900 x 700, 3 desks, boss area below desks.
+ * Canvas: 900 x 620, 3 desks, boss area below desks.
  */
 
 // ============================================================================
@@ -38,17 +38,17 @@ export const COFFEE_MACHINE_POSITION = { x: 875, y: 191 };
 // ============================================================================
 
 /** Printer station position (below boss area) */
-export const PRINTER_STATION_POSITION = { x: 50, y: 625 };
+export const PRINTER_STATION_POSITION = { x: 50, y: 575 };
 
 /** Plant position (to the right of printer) */
-export const PLANT_POSITION = { x: 118, y: 650 };
+export const PLANT_POSITION = { x: 118, y: 600 };
 
 // ============================================================================
 // BOSS AREA (moved up closer to desks)
 // ============================================================================
 
 /** Boss area rug position (centered under boss desk) */
-export const BOSS_RUG_POSITION = { x: 500, y: 620 };
+export const BOSS_RUG_POSITION = { x: 500, y: 570 };
 
 /** Trash can offset from boss desk position */
-export const TRASH_CAN_OFFSET = { x: 110, y: 65 };
+export const TRASH_CAN_OFFSET = { x: 110, y: 55 };

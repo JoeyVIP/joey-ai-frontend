@@ -41,7 +41,7 @@ import { useGameStore } from "@/stores/game-store";
 // ============================================================================
 
 const MODE_INFO: Record<WhiteboardMode, { name: string; icon: string }> = {
-  0: { name: "TODO", icon: "📋" },
+  0: { name: "DASHBOARD", icon: "📊" },
   1: { name: "REMOTE", icon: "📹" },
   2: { name: "TOOL USE", icon: "🍕" },
   3: { name: "ORG", icon: "📊" },
