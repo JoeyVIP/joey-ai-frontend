@@ -14,9 +14,10 @@ interface ContentTabProps {
   project: Project
   onSave: (content: ProjectContent) => void
   onSaveCms?: (data: Record<string, unknown>) => void
+  isRebuilding?: boolean
 }
 
-export function ContentTab({ project, onSave, onSaveCms }: ContentTabProps) {
+export function ContentTab({ project, onSave, onSaveCms, isRebuilding }: ContentTabProps) {
   // 有 cms_schema → 顯示動態表單
   if (project.cms_schema && project.cms_schema.sections.length > 0 && onSaveCms) {
     return (
@@ -24,6 +25,7 @@ export function ContentTab({ project, onSave, onSaveCms }: ContentTabProps) {
         project={project}
         schema={project.cms_schema}
         onSave={onSaveCms}
+        isRebuilding={isRebuilding}
       />
     )
   }

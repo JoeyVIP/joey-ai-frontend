@@ -116,6 +116,23 @@ export async function updateCmsData(projectId: string, cmsData: Record<string, u
   return res.data as import("@/types/project").Project
 }
 
+// ==================== Rebuild Status ====================
+
+export interface RebuildStatus {
+  status: "idle" | "pending" | "cloning" | "validating" | "updating" | "building" | "pushing" | "completed" | "failed"
+  step?: number
+  total_steps?: number
+  message?: string
+  started_at?: string
+  elapsed_seconds?: number
+  error?: string | null
+}
+
+export async function getRebuildStatus(projectId: string): Promise<RebuildStatus> {
+  const res = await api.get(`/api/projects/${projectId}/rebuild-status`)
+  return res.data as RebuildStatus
+}
+
 // ==================== Revisions & Assets ====================
 
 export async function listRevisions(projectId: string) {

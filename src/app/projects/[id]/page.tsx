@@ -26,6 +26,7 @@ import {
 import { Textarea } from "@/components/ui/textarea"
 import { ArrowLeft, Rocket, Wrench, Lock } from "lucide-react"
 import { toast } from "sonner"
+import { useRebuildProgress } from "@/hooks/useRebuildProgress"
 
 export default function ProjectDetailPage() {
   const params = useParams()
@@ -39,6 +40,9 @@ export default function ProjectDetailPage() {
   const [showReviseDialog, setShowReviseDialog] = useState(false)
   const [revisionNotes, setRevisionNotes] = useState("")
   const [showProgressDialog, setShowProgressDialog] = useState(false)
+  const [rebuildTrigger, setRebuildTrigger] = useState(0)
+
+  const { isRebuilding } = useRebuildProgress({ projectId, triggerKey: rebuildTrigger })
 
   // 權限計算：是否可以編輯
   const canEdit = isSuperAdmin || isCmsEnabled
@@ -67,9 +71,15 @@ export default function ProjectDetailPage() {
 
   const handleSaveCms = async (cmsData: Record<string, unknown>) => {
     try {
-      await updateCmsData(projectId, cmsData)
-      toast.success("CMS 內容已儲存")
+      const saved = await updateCmsData(projectId, cmsData)
       fetchProject(projectId)
+
+      // 有 github_url + deploy_url → 後端會觸發 rebuild，啟動 polling
+      if (saved.github_url && saved.deploy_url) {
+        setRebuildTrigger((n) => n + 1)
+      } else {
+        toast.success("CMS 內容已儲存")
+      }
     } catch (err: unknown) {
       const message = (err as { response?: { data?: { detail?: { message?: string } | string } } })
         ?.response?.data?.detail
@@ -212,7 +222,7 @@ export default function ProjectDetailPage() {
           {canEdit && (
             <>
               <TabsContent value="content">
-                <ContentTab project={project} onSave={handleSaveContent} onSaveCms={handleSaveCms} />
+                <ContentTab project={project} onSave={handleSaveContent} onSaveCms={handleSaveCms} isRebuilding={isRebuilding} />
               </TabsContent>
               <TabsContent value="design">
                 <DesignTab project={project} onSave={handleSaveDesign} />

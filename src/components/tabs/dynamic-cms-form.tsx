@@ -5,6 +5,7 @@ import type { Project, CmsSchema } from "@/types/project"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { CmsFieldRenderer } from "./cms-field-renderer"
+import { Loader2 } from "lucide-react"
 import {
   FileText,
   Image,
@@ -57,9 +58,10 @@ interface DynamicCmsFormProps {
   project: Project
   schema: CmsSchema
   onSave: (data: Record<string, unknown>) => void
+  isRebuilding?: boolean
 }
 
-export function DynamicCmsForm({ project, schema, onSave }: DynamicCmsFormProps) {
+export function DynamicCmsForm({ project, schema, onSave, isRebuilding }: DynamicCmsFormProps) {
   const [data, setData] = useState<Record<string, unknown>>(
     (project.cms_data as Record<string, unknown>) ?? {}
   )
@@ -130,7 +132,16 @@ export function DynamicCmsForm({ project, schema, onSave }: DynamicCmsFormProps)
       })}
 
       <div className="flex justify-end">
-        <Button onClick={handleSave}>儲存 CMS 內容</Button>
+        <Button onClick={handleSave} disabled={isRebuilding}>
+          {isRebuilding ? (
+            <>
+              <Loader2 className="h-4 w-4 mr-1.5 animate-spin" />
+              網站更新中...
+            </>
+          ) : (
+            "儲存 CMS 內容"
+          )}
+        </Button>
       </div>
     </div>
   )
