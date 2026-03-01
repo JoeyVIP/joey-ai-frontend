@@ -119,13 +119,15 @@ export async function updateCmsData(projectId: string, cmsData: Record<string, u
 // ==================== Rebuild Status ====================
 
 export interface RebuildStatus {
-  status: "idle" | "pending" | "cloning" | "validating" | "updating" | "building" | "pushing" | "completed" | "failed"
+  status: "idle" | "queued" | "pending" | "locked" | "cloning" | "validating" | "updating" | "building" | "pushing" | "completed" | "failed"
   step?: number
   total_steps?: number
   message?: string
   started_at?: string
+  updated_at?: string
   elapsed_seconds?: number
   error?: string | null
+  trigger?: string | null
 }
 
 export async function getRebuildStatus(projectId: string): Promise<RebuildStatus> {

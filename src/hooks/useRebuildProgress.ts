@@ -5,7 +5,9 @@ import { getRebuildStatus, type RebuildStatus } from "@/lib/api"
 import { toast } from "sonner"
 
 const STEP_EMOJI: Record<string, string> = {
+  queued: "\u23f3",
   pending: "\u23f3",
+  locked: "\ud83d\udd12",
   cloning: "\ud83d\udce5",
   validating: "\ud83d\udd0d",
   updating: "\ud83d\udcdd",
