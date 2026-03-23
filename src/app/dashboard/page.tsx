@@ -2,8 +2,8 @@
 
 import { useEffect, useState, useMemo } from "react";
 import Link from "next/link";
-import { apiClient } from "@/lib/api";
-import { Project, ProjectStatus } from "@/types";
+import { listProjects } from "@/lib/api";
+import { Project, ProjectStatus } from "@/types/project";
 
 export default function DashboardPage() {
   const [projects, setProjects] = useState<Project[]>([]);
@@ -19,8 +19,8 @@ export default function DashboardPage() {
   const loadProjects = async () => {
     try {
       setLoading(true);
-      const data = await apiClient.getProjects();
-      setProjects(data);
+      const data = await listProjects();
+      setProjects(data.projects);
     } catch (err) {
       setError(err instanceof Error ? err.message : "載入專案失敗");
     } finally {
@@ -40,27 +40,27 @@ export default function DashboardPage() {
   }, [projects, searchQuery, statusFilter]);
 
   const getStatusBadge = (status: ProjectStatus) => {
-    const badges = {
-      [ProjectStatus.PENDING]: "bg-gray-100 text-gray-800",
-      [ProjectStatus.RUNNING]: "bg-blue-100 text-blue-800 animate-pulse",
-      [ProjectStatus.COMPLETED]: "bg-green-100 text-green-800",
-      [ProjectStatus.FAILED]: "bg-red-100 text-red-800",
-      [ProjectStatus.CANCELLED]: "bg-gray-100 text-gray-600",
+    const badges: Record<ProjectStatus, string> = {
+      active: "bg-gray-100 text-gray-800",
+      building: "bg-blue-100 text-blue-800 animate-pulse",
+      revising: "bg-yellow-100 text-yellow-800 animate-pulse",
+      completed: "bg-green-100 text-green-800",
+      failed: "bg-red-100 text-red-800",
     };
 
-    const labels = {
-      [ProjectStatus.PENDING]: "等待中",
-      [ProjectStatus.RUNNING]: "執行中",
-      [ProjectStatus.COMPLETED]: "已完成",
-      [ProjectStatus.FAILED]: "失敗",
-      [ProjectStatus.CANCELLED]: "已取消",
+    const labels: Record<ProjectStatus, string> = {
+      active: "進行中",
+      building: "建置中",
+      revising: "修訂中",
+      completed: "已完成",
+      failed: "失敗",
     };
 
     return (
       <span
-        className={`px-2 py-1 rounded-full text-xs font-medium ${badges[status]}`}
+        className={`px-2 py-1 rounded-full text-xs font-medium ${badges[status] ?? "bg-gray-100 text-gray-800"}`}
       >
-        {labels[status]}
+        {labels[status] ?? status}
       </span>
     );
   };
@@ -112,7 +112,7 @@ export default function DashboardPage() {
             <div className="text-gray-600 text-sm mb-1">執行中</div>
             <div className="text-3xl font-bold text-blue-600">
               {
-                projects.filter((p) => p.status === ProjectStatus.RUNNING)
+                projects.filter((p) => p.status === "building" || p.status === "revising")
                   .length
               }
             </div>
@@ -121,7 +121,7 @@ export default function DashboardPage() {
             <div className="text-gray-600 text-sm mb-1">已完成</div>
             <div className="text-3xl font-bold text-green-600">
               {
-                projects.filter((p) => p.status === ProjectStatus.COMPLETED)
+                projects.filter((p) => p.status === "completed")
                   .length
               }
             </div>
@@ -130,7 +130,7 @@ export default function DashboardPage() {
             <div className="text-gray-600 text-sm mb-1">失敗</div>
             <div className="text-3xl font-bold text-red-600">
               {
-                projects.filter((p) => p.status === ProjectStatus.FAILED)
+                projects.filter((p) => p.status === "failed")
                   .length
               }
             </div>
