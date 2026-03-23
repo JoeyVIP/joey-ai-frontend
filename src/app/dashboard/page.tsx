@@ -251,16 +251,9 @@ export default function DashboardPage() {
                     </h3>
                     {getStatusBadge(project.status)}
                   </div>
-                  {project.description && (
-                    <p className="text-gray-600 mb-3 line-clamp-2">
-                      {project.description}
-                    </p>
-                  )}
                   <div className="flex items-center justify-between text-sm text-gray-500">
                     <span>建立於 {formatDate(project.created_at)}</span>
-                    {project.completed_at && (
-                      <span>完成於 {formatDate(project.completed_at)}</span>
-                    )}
+                    <span>更新於 {formatDate(project.updated_at)}</span>
                   </div>
                 </Link>
               ))}
