@@ -58,7 +58,7 @@ export default function DashboardPage() {
 
     return (
       <span
-        className={}
+        className={`px-2 py-1 rounded-full text-xs font-medium ${badges[status]}`}
       >
         {labels[status]}
       </span>
